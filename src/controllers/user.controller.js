@@ -1,6 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   //get user details from frontend
@@ -29,6 +30,12 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //upload to cloudinary
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+
+  if (!avatar) {
+    throw new ApiError(400, "Avatar not found");
+  }
   //create user object-->entry in db
   //remove password and refresh token from response
   //check for user creation and return response
